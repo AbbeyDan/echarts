@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>ECharts</title>
+    <!-- 引入 echarts.js -->
+    <script src="echarts.js"></script>
+</head>
+
+<body>
+    <!-- 为ECharts准备一个具备大小（宽高）的Dom -->
+    <div id="main" style="width: 600px;height:400px;"></div>
+    <script src="jquery-1.12.1.min.js"></script>
+    <script type="text/javascript">
+        // 基于准备好的dom，初始化echarts实例
+        var myChart = echarts.init(document.getElementById('main'));
+
+        // 指定图表的配置项和数据
+        var option = {
+            title: {
+                text: '性格剖析'
+            },
+            tooltip: {
+                formatter: function (datas) {
+                    console.log(datas);
+                    var res = "<p>" + datas.name + "</p>"
+                    res += "<p>参考区间 : " + datas.data.start + "~" + datas.data.end + "</p>"
+                    res += "<p> 你的得分 ："
+                        + datas.data.real + " ( " + (datas.data.real / datas.data.end).toFixed(2) * 100 + "% )</p>"
+                    return res
+                },
+                axisPointer: {
+                    type: 'cross',
+                    label: {
+                        backgroundColor: '#6a7985'
+                    }
+                }
+            },
+            // 图例
+            // legend: {
+            //     // data: ['开始', '得分', '结束']
+            // },
+            toolbox: {
+                feature: {
+                    saveAsImage: {}
+                }
+            },
+            grid: {
+                left: '3%',
+                right: '4%',
+                bottom: '3%',
+                containLabel: true
+            },
+            xAxis: [
+                {
+                    type: 'category',
+                    // 左右两侧是否留白
+                    // boundaryGap: false,
+                    data: ['外向型', '直觉性', '情感性', '开放性']
+                }
+            ],
+            yAxis: [
+                {
+                    type: 'value'
+                }
+            ],
+            series: [
+                // 区间起始值
+                {
+                    name: '开始',
+                    type: 'line',
+                    symbol: "none",
+                    stack: '总量',
+                    itemStyle: {
+                        normal: {
+                            lineStyle: {
+                                color: "transparent"
+                            },
+                            // areaStyle: { 
+                            //     origin:"end",
+                            //     opacity:0.3
+                            //  }
+                        }
+                    },
+                    data: [
+                        // { value: 42 },
+                        // { value: 42 },
+                        // { value: 24 },
+                        // { value: 16 },
+                    ]
+                },
+                {
+                    name: '得分',
+                    type: 'line',
+                    stack: '总量',
+                    itemStyle: {
+                        normal: {
+                            color: "grey",
+                            lineStyle: {
+                                color: "yellow"
+                            },
+                            areaStyle: {
+                                origin: "end",
+                                opacity: 0.3
+                            }
+                        }
+                    },
+                    data: [
+                        // { value: 72-42,real:72,start: 42, end: 80},
+                        // { value: 72-42,real:72,start: 42, end: 81},
+                        // { value: 63-24,real:63,start: 24, end: 64},
+                        // { value: 45-16,real:45,start: 16, end: 62},
+                    ]
+                },
+                // 区间结束值
+                {
+                    name: '结束',
+                    type: 'line',
+                    stack: '总量',
+                    symbol: "none",
+                    itemStyle: {
+                        normal: {
+                            color: "grey",
+                            lineStyle: {
+                                color: "transparent"
+                            },
+                            areaStyle: {
+                                origin: "end",
+                                opacity: 0.3
+                            }
+                        }
+                    },
+                    data: []
+                }
+
+            ]
+        };
+        $.ajax({
+            url: "echarts.json",
+            type: "post",
+            success: function (res) {
+                var obj = {};
+                $(res.list).each(function (i, v) {
+                    // 设置得分数据
+                    obj.value = v.real - v.start;
+                    console.log(obj.value)
+                    obj.start = v.start;
+                    obj.end = v.end;
+                    obj.real = v.real;
+                    option.series[1].data.push(obj)
+                    obj={};
+                    // 设置区间数据
+                    // 起始区间
+                    option.series[0].data.push({value:v.start})
+                    // 结束区间
+                    option.series[2].data.push({value:v.end-v.real})
+                })
+                // 使用刚指定的配置项和数据显示图表。
+                myChart.setOption(option);
+            }
+        })
+
+    </script>
+</body>
+
+</html>
