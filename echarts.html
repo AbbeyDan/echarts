@@ -71,7 +71,7 @@
                     name: '开始',
                     type: 'line',
                     symbol: "none",
-                    stack: '总量',
+                    stack: 'confidence-band',
                     itemStyle: {
                         normal: {
                             lineStyle: {
@@ -100,10 +100,10 @@
                             lineStyle: {
                                 color: "yellow"
                             },
-                            areaStyle: {
-                                origin: "end",
-                                opacity: 0.3
-                            }
+                            // areaStyle: {
+                            //     origin: "end",
+                            //     opacity: 0.3
+                            // }
                         }
                     },
                     data: [
@@ -117,7 +117,7 @@
                 {
                     name: '结束',
                     type: 'line',
-                    stack: '总量',
+                    stack: 'confidence-band',
                     symbol: "none",
                     itemStyle: {
                         normal: {
@@ -143,7 +143,7 @@
                 var obj = {};
                 $(res.list).each(function (i, v) {
                     // 设置得分数据
-                    obj.value = v.real - v.start;
+                    obj.value = v.real;
                     console.log(obj.value)
                     obj.start = v.start;
                     obj.end = v.end;
@@ -154,7 +154,7 @@
                     // 起始区间
                     option.series[0].data.push({value:v.start})
                     // 结束区间
-                    option.series[2].data.push({value:v.end-v.real})
+                    option.series[2].data.push({value:v.end-v.start})
                 })
                 // 使用刚指定的配置项和数据显示图表。
                 myChart.setOption(option);

@@ -1,0 +1,8 @@
+{
+    "list":[
+        {"tag":"外向型","start":42,"end":100,"real":20},
+        {"tag":"直觉型","start":33,"end":100,"real":90},
+        {"tag":"情感型","start":45,"end":100,"real":72},
+        {"tag":"开放型","start":20,"end":100,"real":30}
+    ]
+}
